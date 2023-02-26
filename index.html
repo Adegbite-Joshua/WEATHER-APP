@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="../bootstrap-5.2.2-dist/css/bootstrap.css">
+</head>
+<style>
+    @media (max-width: 768px){
+        .smallDeviceHeight{
+            height: 25% !important;
+        }
+        .smallDeviceHeight2{
+            height: 75% !important;
+        }
+    }
+</style>
+<body onload="fetchUserLocation()" style="background-image: url(../4-Things-You-Should-Know-About-Space-Exploration.jpg);background-repeat: no-repeat;background-size: 100% 100%; height: 100vh; width: 100vw;" class="row position-relative">
+<div id="waiting" class="d-none" style="z-index: 999999999999999;">
+    <p class="text-light p-2"><span class="spinner-border text-danger"></span>Fetching Location Data</p>
+</div>
+<div class="col-12 col-md-6 h-100 smallDeviceHeight">
+    <div class="d-block mx-auto w-50">
+        <input type="text" placeholder="Search Location" class="form-control my-2 mt-5" id="search">
+        <button class="w-50 d-block btn btn-success my-2" onclick="fetchData()">Search</button>
+    </div>
+</div>
+<div class="col-12 col-md-6 h-100 bg-dark bg-opacity-50 text-light smallDeviceHeight2">
+    <div id="display"></div>
+    <div id="displayHistory"></div>
+</div> 
+
+
+    <script>
+        let searchHistory = []
+        let isFetchingData = true
+        const fetchData =()=>{
+            if (localStorage.searchHistory) {
+            searchHistory = JSON.parse(localStorage.getItem("searchHistory"))
+            }
+            searchHistory.push(search.value)
+            localStorage.setItem("searchHistory", JSON.stringify(searchHistory))
+            isFetchingData = true
+            if (isFetchingData) {
+                waiting.className = "d-block position-absolute bottom-0 top-0 start-0 end-0 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center"
+            }
+            let endpiont = `https://api.openweathermap.org/data/2.5/weather?q=${search.value}&appid=2d96753a7880366144f7a8fcd87d322a&units=metric`
+            fetch(endpiont)
+            .then((response)=>response.json())
+            .then((convertedResponse)=>{
+                search.value = ""
+                search.focus()
+                isFetchingData = false
+                if (!isFetchingData) {
+                    waiting.className = "d-none"
+                }
+                console.log(convertedResponse)
+                searchHistory.push(search.value)
+                display.innerHTML =`
+                <p>Location: ${search.value}, ${convertedResponse.sys.country} </p>
+                <p>Temperature: ${convertedResponse.main.temp}</p>
+                <p>Cloud Condition: ${convertedResponse.weather[0].main}:  ${convertedResponse.weather[0].description}</p>
+                <p>Wind Speed: ${convertedResponse.wind.speed}</p>
+                <p>Humidity: ${convertedResponse.main.humidity}</p>
+                <p>Pressure: ${convertedResponse.main.pressure}</p>
+                <p>Longitude: ${convertedResponse.coord.lon}</p>
+                <p>Latitude: ${convertedResponse.coord.lat}</p>
+                `
+            })
+            .catch((err)=>{
+                console.log(err)
+                display.innerHTML = err
+            })
+            searchHis()
+        }
+        const fetchUserLocation =()=>{
+            isFetchingData = true
+            if (isFetchingData) {
+                waiting.className = "d-block position-absolute bottom-0 top-0 start-0 end-0 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center"
+            }
+            navigator.geolocation.getCurrentPosition((location)=>{
+                // console.log(location)
+                let endPointForUser = `https://api.openweathermap.org/data/2.5/weather?lat=${location.coords.latitude}&lon=${location.coords.longitude}&appid=2d96753a7880366144f7a8fcd87d322a&units=metric`
+                fetch(endPointForUser)
+                .then((response)=>response.json())
+                .then((convertedResponse)=>{
+                    isFetchingData = false
+                if (!isFetchingData) {
+                    waiting.className = "d-none"
+                }
+                    console.log(convertedResponse)
+                    display.innerHTML =`
+                    <p>Location: ${convertedResponse.name}, ${convertedResponse.sys.country} </p>
+                    <p>Temperature: ${convertedResponse.main.temp}</p>
+                    <p>Cloud Condition: ${convertedResponse.weather[0].main}:  ${convertedResponse.weather[0].description}</p>
+                    <p>Wind Speed: ${convertedResponse.wind.speed}</p>
+                    <p>Humidity: ${convertedResponse.main.humidity}</p>
+                    <p>Pressure: ${convertedResponse.main.pressure}</p>
+                    <p>Longitude: ${convertedResponse.coord.lon}</p>
+                    <p>Latitude: ${convertedResponse.coord.lat}</p>
+                    `
+                })
+            })
+            .catch((err)=>{
+                console.log(err)
+                display.innerHTML = err
+            })
+            searchHis()
+        }
+        const searchHis =()=>{
+            if (searchHistory==[]) {
+               displayHistory.innerHTML = `<h2 class="text-center p-2">You did not have any search history yet</h2>`
+            } else{
+                displayHistory.innerHTML = `<h4 class="text-center p-2">Your recent search history</h4>`
+                let showingHistory = searchHistory.reverse().filter((searchList, index)=>index<=5)
+                showingHistory.map((searchList, index)=>{
+                    displayHistory.innerHTML += `<p><span class="me-3">${index+1}</span>  ${searchList}<p>`
+                })
+            }
+            console.log(searchHistory)
+        }
+    </script>
+</body>
+</html>
