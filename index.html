@@ -61,10 +61,10 @@
                 searchHistory.push(searchLocation)
                 display.innerHTML =`
                 <p>Location: ${searchLocation}, ${convertedResponse.sys.country} </p>
-                <p>Temperature: ${convertedResponse.main.temp}</p>
+                <p>Temperature: ${convertedResponse.main.temp}°C</p>
                 <p>Cloud Condition: ${convertedResponse.weather[0].main}:  ${convertedResponse.weather[0].description}</p>
-                <p>Wind Speed: ${convertedResponse.wind.speed}</p>
-                <p>Humidity: ${convertedResponse.main.humidity}</p>
+                <p>Wind Speed: ${convertedResponse.wind.speed}mph</p>
+                <p>Humidity: ${convertedResponse.main.humidity}%</p>
                 <p>Pressure: ${convertedResponse.main.pressure}</p>
                 <p>Longitude: ${convertedResponse.coord.lon}</p>
                 <p>Latitude: ${convertedResponse.coord.lat}</p>
@@ -94,10 +94,10 @@
                     console.log(convertedResponse)
                     display.innerHTML =`
                     <p>Location: ${convertedResponse.name}, ${convertedResponse.sys.country} </p>
-                    <p>Temperature: ${convertedResponse.main.temp}</p>
+                    <p>Temperature: ${convertedResponse.main.temp}°C</p>
                     <p>Cloud Condition: ${convertedResponse.weather[0].main}:  ${convertedResponse.weather[0].description}</p>
-                    <p>Wind Speed: ${convertedResponse.wind.speed}</p>
-                    <p>Humidity: ${convertedResponse.main.humidity}</p>
+                    <p>Wind Speed: ${convertedResponse.wind.speed}mph</p>
+                    <p>Humidity: ${convertedResponse.main.humidity}%</p>
                     <p>Pressure: ${convertedResponse.main.pressure}</p>
                     <p>Longitude: ${convertedResponse.coord.lon}</p>
                     <p>Latitude: ${convertedResponse.coord.lat}</p>
